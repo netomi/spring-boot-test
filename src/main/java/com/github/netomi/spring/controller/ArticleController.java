@@ -17,6 +17,8 @@ package com.github.netomi.spring.controller;
 
 import com.github.netomi.spring.model.Article;
 import com.github.netomi.spring.model.ArticleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/article")
 public class ArticleController {
+    private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
+
     private ArticleRepository repository;
 
     @Autowired
@@ -44,6 +48,7 @@ public class ArticleController {
 	public Article findOne(@PathVariable String slug) {
         Article article = repository.findBySlug(slug);
         if (article == null) {
+            logger.error("trying to retrieve non-existing article: " + slug);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "article with slug '" + slug + "' not found");
         } else {
             return article;
